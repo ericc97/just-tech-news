@@ -1,5 +1,4 @@
 const { Model, DataTypes } = require('sequelize');
-const { User } = require('./User');
 const sequelize = require('../config/connection');
 
 // Create our post model
@@ -19,9 +18,17 @@ class Post extends Model {
               'title',
               'created_at',
               [
-                sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
-                'vote_count'
-              ]
+                sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),'vote_count']
+            ],
+            include: [
+                {
+                    model: models.Comment,
+                    attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                    include: {
+                        model: models.User,
+                        attributes: ['username']
+                    }
+                }
             ]
           });
         });
@@ -38,10 +45,8 @@ Post.init(
             autoIncrement: true
         },
         title: {
-             
             type: DataTypes.STRING,
             allowNull: false
-            
         },
         post_url: {
             type: DataTypes.STRING,

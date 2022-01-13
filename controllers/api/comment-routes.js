@@ -14,7 +14,7 @@ router.get('/', (req,res) => {
 router.post('/', (req,res) => {
     Comment.create({
         comment_text: req.body.comment_text,
-        user_id: req.body.user_id,
+        user_id: req.session.user_id,
         post_id: req.body.post_id
 
 })
@@ -36,7 +36,7 @@ router.delete('/:id', (req,res) => {
             res.status(404).json({ message: 'No comments found for this user id1'});
             return;
         }
-        res.json(dbCommentData)
+        res.json(dbCommentData);
     })
     .catch(err => {
         console.log(err);
